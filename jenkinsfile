@@ -1,0 +1,47 @@
+
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout your code from your version control system (e.g., Git)
+                echo 'Git clone Starts'
+                sh 'git clone git@github.com:PrakashRajugithub/sparkjava-war-example.git'
+            }
+        }
+
+        stage('Check pom.xml') {
+            steps {
+                script {
+                    if (fileExists('pom.xml')) {
+                        echo 'pom.xml exists'
+                    } else {
+                        error 'pom.xml does not exist'
+                    }
+                }
+            }
+        stage('Build') {
+            steps {
+                // Perform any build steps here (e.g., building a static website)
+                sh 'mvn clean package'  // Replace with your build commands
+                // sh 'npm run build' // Replace with your build commands
+            }
+        }
+
+        // stage('Deploy to S3') {
+        //     environment {
+        //         AWS_DEFAULT_REGION = 'ap-southeast-1' // Replace with your AWS region
+        //     }
+        //     steps {
+        //         withAWS(credentials: 'your-aws-credentials-id', region: 'ap-southeast-1') {
+        //             sh '''
+        //                 aws s3 cp s3://your-s3-bucket-name
+        //                 aws s3 website s3://your-s3-bucket-name --index-document index.html
+        //             '''
+        //         }
+        //     }
+        // }
+    }
+}
