@@ -1,6 +1,6 @@
-provider "aws" {
-  region = "ap-southeast-1"
-}
+# provider "aws" {
+#   region = "ap-southeast-1"
+# }
 
 resource "aws_s3_bucket" "BuildArtifacts" {
     bucket = "demoartifacts1"
@@ -34,6 +34,31 @@ resource "aws_iam_role" "codebuild_role" {
     role = aws_iam_role.codebuild_role.name
     policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
     }
+
+resource "aws_iam_role_policy" "codebuild_cloudwatch_policy" {
+  name = "codebuild-logs-policy"
+  role = aws_iam_role.codebuild_role.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Effect   = "Allow",
+        Resource = [
+          "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/*",
+          "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/*:log-stream:*"
+        ]
+      }
+    ]
+  })
+}
+
+
 
 resource "aws_codebuild_project" "build_Demo" {
   name          = "build-Demo"
