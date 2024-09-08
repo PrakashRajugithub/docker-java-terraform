@@ -13,8 +13,8 @@ phases:
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t Demo .
-      - docker tag Demo:latest $ECR_REGISTRY_URL:latest
+      - docker build -t demo .
+      - docker tag demo:latest $ECR_REGISTRY_URL:latest
   post_build:
     commands:
       - echo Pushing the Docker image...
