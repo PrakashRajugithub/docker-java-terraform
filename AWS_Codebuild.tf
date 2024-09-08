@@ -23,17 +23,19 @@ resource "aws_iam_role" "codebuild_role" {
         Principal = {
           Service = "codebuild.amazonaws.com"
         }
-        Action = [
-                   "ecr:GetDownloadUrlForLayer",
-                   "ecr:BatchGetImage",
-                   "ecr:BatchCheckLayerAvailability",
-                   "ecr:PutImage",
-                   "ecr:CompleteLayerUpload",
-                   "ecr:UploadLayerPart",
-                   "ecr:InitiateLayerUpload",
-                   "ecr:GetAuthorizationToken"
-        ],
-        "Resource": "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.current.account_id}:repository/demo"
+        Action = "sts:AssumeRole"
+        
+        # [
+        #            "ecr:GetDownloadUrlForLayer",
+        #            "ecr:BatchGetImage",
+        #            "ecr:BatchCheckLayerAvailability",
+        #            "ecr:PutImage",
+        #            "ecr:CompleteLayerUpload",
+        #            "ecr:UploadLayerPart",
+        #            "ecr:InitiateLayerUpload",
+        #            "ecr:GetAuthorizationToken"
+        # ],
+        # "Resource": "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.current.account_id}:repository/demo"
       }
     ]
   })
@@ -63,6 +65,18 @@ resource "aws_iam_role_policy" "codebuild_cloudwatch_policy" {
           "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/*",
           "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/*:log-stream:*"
         ]
+      },
+      {
+        Action   = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:PutImage",
+          "ecr:CompleteLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:InitiateLayerUpload"
+        ],
+        Effect   = "Allow",
+        Resource = "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.current.account_id}:repository/demo"
       }
     ]
   })
