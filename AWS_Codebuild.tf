@@ -23,7 +23,17 @@ resource "aws_iam_role" "codebuild_role" {
         Principal = {
           Service = "codebuild.amazonaws.com"
         }
-        Action = "sts:AssumeRole"
+        Action = [
+                   "ecr:GetDownloadUrlForLayer",
+                   "ecr:BatchGetImage",
+                   "ecr:BatchCheckLayerAvailability",
+                   "ecr:PutImage",
+                   "ecr:CompleteLayerUpload",
+                   "ecr:UploadLayerPart",
+                   "ecr:InitiateLayerUpload",
+                   "ecr:GetAuthorizationToken"
+        ],
+        "Resource": "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.current.account_id}:repository/demo"
       }
     ]
   })
