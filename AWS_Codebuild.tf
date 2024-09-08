@@ -66,7 +66,7 @@ resource "aws_codebuild_project" "build_Demo" {
 
   source {
     type            = "GITHUB"
-    location        = "https://github.com/kliakos/sparkjava-war-example.git"
+    location        = "https://github.com/PrakashRajugithub/docker-java-terraform.git"
     buildspec       = "buildspec.yml"
   }
 
