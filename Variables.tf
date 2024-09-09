@@ -9,3 +9,7 @@ data "aws_caller_identity" "current" {}
 output "aws_account_number" {
   value = data.aws_caller_identity.current.account_id
 }
+
+output "vpcid" {
+  value = aws_vpc.new-vpc.id
+}
