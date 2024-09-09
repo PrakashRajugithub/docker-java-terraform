@@ -3,8 +3,8 @@ resource "aws_ecs_cluster" "demo_cluster" {
 }
 
 
-resource "aws_ecs_task_definition" "Demo_task" {
-  family                   = "Demo-task"
+resource "aws_ecs_task_definition" "demo_task" {
+  family                   = "demo-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
@@ -14,7 +14,7 @@ resource "aws_ecs_task_definition" "Demo_task" {
   container_definitions = jsonencode([
     {
       name      = "Demo"
-      image     = "235494813694.dkr.ecr.ap-southeast-1.amazonaws.com:latest"
+      image     = "235494813694.dkr.ecr.ap-southeast-1.amazonaws.com/demo:latest"
       essential = true
       portMappings = [
         {
@@ -29,7 +29,7 @@ resource "aws_ecs_task_definition" "Demo_task" {
 resource "aws_ecs_service" "demo_service" {
   name            = "demo-service"
   cluster         = aws_ecs_cluster.demo_cluster.id
-  task_definition = aws_ecs_task_definition.Demo_task.id
+  task_definition = aws_ecs_task_definition.demo_task.id
   desired_count   = 1
 
   network_configuration {
