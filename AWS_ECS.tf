@@ -1,7 +1,124 @@
 resource "aws_ecs_cluster" "demo_cluster" {
-  name = "Demo-cluster"
+  name = "demo-cluster"
 }
 
+resource "aws_iam_role" "ecs_task_demo_role" {
+  name = "ecs-task-demo-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "ecs_demo_role_policy" {
+  name = "ecs-demo-role-policy"
+  role = aws_iam_role.ecs_demo_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ecs:RunTask",
+          "ecs:StopTask",
+          "ecs:DescribeTasks",
+          "ecs:DescribeServices",
+          "ecs:UpdateService",
+          "iam:PassRole"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+##############################################
+resource "aws_iam_role" "demo_ecs_task_execution_role" {
+  name = "ecsTaskExecutionRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        },
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "demo_ecs_task_execution_policy" {
+  name = "ecsTaskExecutionPolicy"
+  role = aws_iam_role.demo_ecs_task_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage",
+          "ecr:GetAuthorizationToken",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject"
+        ],
+        Resource = "arn:aws:s3:::your-s3-bucket-name/*"
+      }
+    ]
+  })
+}
+
+
+
+#######################################
+resource "aws_iam_policy" "pass_role_policy_ecs" {
+  name        = "pass-role-policy-ecs"
+  description = "Allow passing roles to ECS"
+  
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = "iam:PassRole",
+        Resource = aws_iam_role.ecs_demo_role.arn
+      }
+    ]
+  })
+}
+############################################
 
 resource "aws_ecs_task_definition" "demo_task" {
   family                   = "demo-task"
@@ -9,11 +126,12 @@ resource "aws_ecs_task_definition" "demo_task" {
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
   memory                   = "512"
-  execution_role_arn = aws_iam_role.codebuild_role.arn
+  execution_role_arn = aws_iam_role.demo_ecs_task_execution_role.arn
+  task_role_arn         = aws_iam_role.ecs_task_demo_role.arn
 
   container_definitions = jsonencode([
     {
-      name      = "Demo"
+      name      = "demo"
       image     = "235494813694.dkr.ecr.ap-southeast-1.amazonaws.com/demo:latest"
       essential = true
       portMappings = [
