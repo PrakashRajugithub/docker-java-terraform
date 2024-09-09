@@ -93,25 +93,25 @@ resource "aws_codepipeline" "demo_pipeline" {
     type     = "S3"
   }
 
-#   stage {
-#     name = "Source"
+  stage {
+    name = "Source"
 
-#     action {
-#       name             = "Source"
-#       category         = "Source"
-#       owner            = "AWS"
-#       provider         = "GitHub"
-#       version          = "1"
-#       output_artifacts = ["source_output"]
+    action {
+      name             = "Source"
+      category         = "Source"
+      owner            = "AWS"
+      provider         = "GitHub"
+      version          = "1"
+      output_artifacts = ["source_output"]
 
-#       configuration = {
-#         Owner      = "your-github-username"
-#         Repo       = "your-repo"
-#         Branch     = "main"
-#         OAuthToken = var.github_oauth_token
-#       }
-#     }
-#   }
+      configuration = {
+        Owner      = var.github_owner
+        Repo       = var.github_repo
+        Branch     = var.github_branch
+        OAuthToken = var.github_oauth_token
+      }
+    }
+  }
 
   stage {
     name = "Build"
@@ -121,7 +121,7 @@ resource "aws_codepipeline" "demo_pipeline" {
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
-      input_artifacts  = []
+      input_artifacts  = ["source_output"]
       output_artifacts = ["build_output"]
       version          = "1"
 
