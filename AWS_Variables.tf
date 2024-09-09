@@ -47,5 +47,4 @@ variable "github_oauth_token" {
   description = "OAuth token for GitHub API access"
   type        = string
   sensitive   = true  # Marked as sensitive so that it doesn't get logged
-  default = "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"
-}
+ }
