@@ -21,7 +21,7 @@ resource "aws_iam_role" "ecs_task_demo_role" {
 
 resource "aws_iam_role_policy" "ecs_demo_role_policy" {
   name = "ecs-demo-role-policy"
-  role = aws_iam_role.ecs_demo_role.id
+  role = aws_iam_role.ecs_task_demo_role.id
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -113,7 +113,7 @@ resource "aws_iam_policy" "pass_role_policy_ecs" {
       {
         Effect = "Allow",
         Action = "iam:PassRole",
-        Resource = aws_iam_role.ecs_demo_role.arn
+        Resource = aws_iam_role.ecs_task_demo_role.arn
       }
     ]
   })
@@ -149,10 +149,11 @@ resource "aws_ecs_service" "demo_service" {
   cluster         = aws_ecs_cluster.demo_cluster.id
   task_definition = aws_ecs_task_definition.demo_task.id
   desired_count   = 1
+  launch_type     = "FARGATE"
 
   network_configuration {
     subnets         = [aws_subnet.public[0].id, aws_subnet.public[0].id,]  # Replace with your VPC subnets
     security_groups = [aws_security_group.demo-sg.id]      # Replace with your security group
-    # assign_public_ip = true
+    assign_public_ip = true
   }
 }
