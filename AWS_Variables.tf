@@ -48,3 +48,10 @@ variable "github_oauth_token" {
   type        = string
   sensitive   = true  # Marked as sensitive so that it doesn't get logged
  }
+
+
+
+output "ecs_task_ip" {
+  value = aws_ecs_service.demo_service.network_configuration[0].assign_public_ip
+}
+
