@@ -25,29 +25,29 @@ output "vpcid" {
 }
 
 
-variable "github_owner" {
-  description = "The GitHub username or organization that owns the repository"
-  type        = string
-  default = "PrakashRajugithub"
-}
+# variable "github_owner" {
+#   description = "The GitHub username or organization that owns the repository"
+#   type        = string
+#   default = "PrakashRajugithub"
+# }
 
-variable "github_repo" {
-  description = "The name of the GitHub repository"
-  type        = string
-  default = "https://github.com/PrakashRajugithub/docker-java-terraform.git"
-}
+# variable "github_repo" {
+#   description = "The name of the GitHub repository"
+#   type        = string
+#   default = "https://github.com/PrakashRajugithub/docker-java-terraform.git"
+# }
 
-variable "github_branch" {
-  description = "The branch of the repository to use"
-  type        = string
-  default     = "main"  # Optional, set default value
-}
+# variable "github_branch" {
+#   description = "The branch of the repository to use"
+#   type        = string
+#   default     = "main"  # Optional, set default value
+# }
 
-variable "github_oauth_token" {
-  description = "OAuth token for GitHub API access"
-  type        = string
-  sensitive   = true  # Marked as sensitive so that it doesn't get logged
- }
+# variable "github_oauth_token" {
+#   description = "OAuth token for GitHub API access"
+#   type        = string
+#   sensitive   = true  # Marked as sensitive so that it doesn't get logged
+#  }
 
 
 
