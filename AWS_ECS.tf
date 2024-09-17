@@ -128,6 +128,9 @@ resource "aws_ecs_task_definition" "demo_task" {
   memory                   = "512"
   execution_role_arn = aws_iam_role.demo_ecs_task_execution_role.arn
   task_role_arn         = aws_iam_role.ecs_task_demo_role.arn
+  lifecycle {
+    ignore_changes = []
+  }
 
   container_definitions = jsonencode([
     {
